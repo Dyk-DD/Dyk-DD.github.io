@@ -1,73 +1,59 @@
-# React + TypeScript + Vite
+# 临床决策辅助系统 - 前端
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+基于 React + Vite + TypeScript 的临床决策辅助前端界面，通过 SSE 流式通信与 [Agentic-RAG](https://github.com/Dyk-DD/Agentic-RAG) 后端 API 交互。
 
-Currently, two official plugins are available:
+## 技术栈
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19 + TypeScript
+- Vite 8（开发/构建）
+- Zustand（状态管理）
+- React Router 7（路由）
+- SSE（服务端推送流式响应）
 
-## React Compiler
+## 功能
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **对话问答**：流式输出，支持医疗症状、药物禁忌、临床推理等查询
+- **路由可视化**：展示后端智能路由的决策策略、复杂度评估
+- **会话管理**：新建/切换/删除对话会话
+- **历史记录**：浏览和查看历史会话详情
 
-## Expanding the ESLint configuration
+## 本地开发
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# 安装依赖
+npm install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# 启动开发服务器（默认 http://localhost:5173）
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+开发时 Vite 会将 `/api` 请求代理到后端 `http://localhost:8000`。
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 生产构建
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
+```
+
+构建产物输出到 `dist/` 目录。
+
+## 部署
+
+推送代码后 GitHub Actions 自动构建并部署到 GitHub Pages。需在仓库 Settings → Pages 中将 Source 设为 **GitHub Actions**。
+
+## 项目结构
+
+```text
+src/
+├── api/client.ts          # API 客户端（REST + SSE）
+├── store/chatStore.ts     # Zustand 状态管理
+├── types/index.ts         # TypeScript 类型定义
+├── components/
+│   ├── ChatLayout.tsx     # 侧边栏 + 主布局
+│   ├── ChatMessage.tsx    # 消息气泡
+│   ├── ChatInput.tsx      # 输入框
+│   └── RoutingCard.tsx    # 路由决策卡片
+└── pages/
+    ├── ChatPage.tsx       # 对话页
+    └── HistoryPage.tsx    # 历史记录页
 ```
