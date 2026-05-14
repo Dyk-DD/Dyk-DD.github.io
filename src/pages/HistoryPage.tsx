@@ -9,7 +9,7 @@ export default function HistoryPage() {
   const { sessions, loadSessions, removeSession } = useChatStore();
   const [selected, setSelected] = useState<SessionDetail | null>(null);
   const [loading, setLoading] = useState(false);
-  const { openSettings } = useOutletContext<{ openSettings: () => void }>();
+  const { openSettings } = useOutletContext<{ openSettings: () => void }>() || {};
 
   useEffect(() => {
     loadSessions();

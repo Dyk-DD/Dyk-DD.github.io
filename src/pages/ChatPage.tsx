@@ -8,7 +8,7 @@ import ChatInput from '../components/ChatInput';
 export default function ChatPage() {
   const { messages, loading, streaming, error, sendMessage } = useChatStore();
   const bottomRef = useRef<HTMLDivElement>(null);
-  const { openSettings } = useOutletContext<{ openSettings: () => void }>();
+  const { openSettings } = useOutletContext<{ openSettings: () => void }>() || {};
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
