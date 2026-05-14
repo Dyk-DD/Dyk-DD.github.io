@@ -4,7 +4,7 @@ const DEFAULT_BACKEND = 'https://symmetric-maire-overthoughtfully.ngrok-free.dev
 
 export function getApiBase(): string {
   if (import.meta.env.DEV) {
-    return '/api';
+    return '';  // Vite proxy strips nothing, /api/* forwarded to backend
   }
   return localStorage.getItem(STORAGE_KEY) || DEFAULT_BACKEND;
 }
