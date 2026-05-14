@@ -13,8 +13,8 @@ export default function PatientGate({ onReady }: Props) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [patients, setPatients] = useState<Array<{ patient_id: string; name: string }>>([]);
+  const [fetching, setFetching] = useState(false);
 
-  // If already have patient, skip
   useEffect(() => {
     if (hasPatient()) {
       onReady();
@@ -24,6 +24,7 @@ export default function PatientGate({ onReady }: Props) {
   }, []);
 
   const loadPatients = async () => {
+    setFetching(true);
     try {
       const res = await fetch(`${getApiBase()}/api/patients`, {
         headers: { 'ngrok-skip-browser-warning': 'true', 'Authorization': `Bearer ${getToken()}` },
@@ -31,8 +32,14 @@ export default function PatientGate({ onReady }: Props) {
       if (res.ok) {
         const data = await res.json();
         setPatients(data.patients || []);
+      } else {
+        console.error('Failed to load patients:', res.status);
       }
-    } catch {}
+    } catch (e) {
+      console.error('Failed to load patients:', e);
+    } finally {
+      setFetching(false);
+    }
   };
 
   const handleRegister = async () => {
@@ -103,6 +110,7 @@ export default function PatientGate({ onReady }: Props) {
         {mode === 'menu' && (
           <div>
             <p className="login-subtitle">请选择或创建您的患者身份</p>
+            {fetching && <p style={{ textAlign: 'center', color: '#64748b', fontSize: '0.85rem' }}>加载已有身份中...</p>}
 
             {patients.length > 0 && (
               <div className="patient-select-list">
