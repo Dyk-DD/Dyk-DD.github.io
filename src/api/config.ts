@@ -1,11 +1,11 @@
 const STORAGE_KEY = 'agentic_rag_api_base';
+const TOKEN_KEY = 'agentic_rag_token';
 const DEFAULT_BACKEND = 'https://symmetric-maire-overthoughtfully.ngrok-free.dev';
 
 export function getApiBase(): string {
   if (import.meta.env.DEV) {
     return '/api';
   }
-  // User override via localStorage takes priority, otherwise use default
   return localStorage.getItem(STORAGE_KEY) || DEFAULT_BACKEND;
 }
 
@@ -20,4 +20,20 @@ export function clearApiBase(): void {
 
 export function isApiConfigured(): boolean {
   return getApiBase() !== '';
+}
+
+export function getToken(): string {
+  return localStorage.getItem(TOKEN_KEY) || '';
+}
+
+export function setToken(token: string): void {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function clearToken(): void {
+  localStorage.removeItem(TOKEN_KEY);
+}
+
+export function isAuthenticated(): boolean {
+  return getToken() !== '';
 }

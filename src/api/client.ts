@@ -1,4 +1,4 @@
-import { getApiBase } from './config';
+import { getApiBase, getToken } from './config';
 
 function apiUrl(path: string): string {
   const base = getApiBase();
@@ -6,9 +6,11 @@ function apiUrl(path: string): string {
   return `${base}${path}`;
 }
 
-// Bypass ngrok browser warning interstitial
 function hdrs(extra?: Record<string, string>): Record<string, string> {
-  return { 'ngrok-skip-browser-warning': 'true', ...extra };
+  const token = getToken();
+  const base: Record<string, string> = { 'ngrok-skip-browser-warning': 'true' };
+  if (token) base['Authorization'] = `Bearer ${token}`;
+  return { ...base, ...extra };
 }
 
 export async function chatNonStream(question: string) {

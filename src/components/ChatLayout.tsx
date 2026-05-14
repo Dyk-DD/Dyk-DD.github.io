@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { useChatStore } from '../store/chatStore';
-import { isApiConfigured } from '../api/config';
+import { isApiConfigured, clearToken } from '../api/config';
 import ApiSettings from './ApiSettings';
 
 export default function ChatLayout() {
@@ -64,6 +64,9 @@ export default function ChatLayout() {
           <button type="button" className="btn-settings" onClick={() => setSettingsOpen(true)}>
             ⚙ 后端连接
             <span className={`api-status ${apiOk ? 'ok' : 'none'}`} />
+          </button>
+          <button type="button" className="btn-settings btn-logout" onClick={() => { clearToken(); window.location.reload(); }}>
+            🚪 退出
           </button>
         </div>
       </aside>
