@@ -1,14 +1,23 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { useChatStore } from '../store/chatStore';
+import { isApiConfigured } from '../api/config';
+import ApiSettings from './ApiSettings';
 
 export default function ChatLayout() {
   const location = useLocation();
   const { sessions, sessionId, loadSessions, newSession, removeSession } = useChatStore();
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [apiOk, setApiOk] = useState(isApiConfigured());
 
   useEffect(() => {
     loadSessions();
   }, [loadSessions]);
+
+  // Keep indicator in sync when settings modal closes
+  useEffect(() => {
+    setApiOk(isApiConfigured());
+  }, [settingsOpen]);
 
   return (
     <div className="app-layout">
@@ -50,11 +59,20 @@ export default function ChatLayout() {
             {sessions.length === 0 && <p className="empty-hint">暂无会话</p>}
           </div>
         )}
+
+        <div className="sidebar-footer">
+          <button type="button" className="btn-settings" onClick={() => setSettingsOpen(true)}>
+            ⚙ 后端连接
+            <span className={`api-status ${apiOk ? 'ok' : 'none'}`} />
+          </button>
+        </div>
       </aside>
 
       <main className="main-content">
-        <Outlet />
+        <Outlet context={{ openSettings: () => setSettingsOpen(true) }} />
       </main>
+
+      <ApiSettings open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   );
 }

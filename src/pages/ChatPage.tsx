@@ -1,15 +1,32 @@
 import { useEffect, useRef } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useChatStore } from '../store/chatStore';
+import { isApiConfigured } from '../api/config';
 import ChatMessage from '../components/ChatMessage';
 import ChatInput from '../components/ChatInput';
 
 export default function ChatPage() {
   const { messages, loading, streaming, error, sendMessage } = useChatStore();
   const bottomRef = useRef<HTMLDivElement>(null);
+  const { openSettings } = useOutletContext<{ openSettings: () => void }>();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const backendReady = isApiConfigured() || import.meta.env.DEV;
+
+  if (!backendReady) {
+    return (
+      <div className="setup-prompt">
+        <h2>尚未配置后端连接</h2>
+        <p>请启动本地后端并使用 ngrok 暴露服务，然后在此配置后端地址。</p>
+        <button type="button" className="btn-open-settings" onClick={openSettings}>
+          ⚙ 配置后端地址
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="chat-page">

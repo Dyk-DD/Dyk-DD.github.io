@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { Message, RoutingInfo, Session } from '../types';
 import * as api from '../api/client';
+import { isApiConfigured } from '../api/config';
 
 interface ChatState {
   messages: Message[];
@@ -90,6 +91,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
   sendMessage: async (question: string) => {
     const state = get();
     if (state.loading || state.streaming) return;
+
+    if (!isApiConfigured() && !import.meta.env.DEV) {
+      set({ error: '请先在侧边栏配置后端连接地址' });
+      return;
+    }
 
     const userMsg: Message = {
       id: nextId(),

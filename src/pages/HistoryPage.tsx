@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useChatStore } from '../store/chatStore';
+import { isApiConfigured } from '../api/config';
 import * as api from '../api/client';
 import type { SessionDetail } from '../types';
 
@@ -7,10 +9,25 @@ export default function HistoryPage() {
   const { sessions, loadSessions, removeSession } = useChatStore();
   const [selected, setSelected] = useState<SessionDetail | null>(null);
   const [loading, setLoading] = useState(false);
+  const { openSettings } = useOutletContext<{ openSettings: () => void }>();
 
   useEffect(() => {
     loadSessions();
   }, [loadSessions]);
+
+  const backendReady = isApiConfigured() || import.meta.env.DEV;
+
+  if (!backendReady) {
+    return (
+      <div className="setup-prompt">
+        <h2>尚未配置后端连接</h2>
+        <p>请启动本地后端并使用 ngrok 暴露服务，然后在此配置后端地址。</p>
+        <button type="button" className="btn-open-settings" onClick={openSettings}>
+          ⚙ 配置后端地址
+        </button>
+      </div>
+    );
+  }
 
   const viewSession = async (id: string) => {
     setLoading(true);
@@ -43,6 +60,7 @@ export default function HistoryPage() {
                 <span>{s.start_time ? new Date(s.start_time).toLocaleString() : '-'}</span>
               </div>
               <button
+                type="button"
                 className="btn-delete"
                 onClick={(e) => {
                   e.stopPropagation();

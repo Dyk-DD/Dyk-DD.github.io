@@ -1,7 +1,13 @@
-const BASE = '/api';
+import { getApiBase } from './config';
+
+function apiUrl(path: string): string {
+  const base = getApiBase();
+  if (!base) throw new Error('BACKEND_NOT_CONFIGURED');
+  return `${base}${path}`;
+}
 
 export async function chatNonStream(question: string) {
-  const res = await fetch(`${BASE}/chat`, {
+  const res = await fetch(apiUrl('/api/chat'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ question, stream: false }),
@@ -19,7 +25,7 @@ export function chatStream(
 ): AbortController {
   const controller = new AbortController();
 
-  fetch(`${BASE}/chat/stream`, {
+  fetch(apiUrl('/api/chat/stream'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ question, stream: true }),
@@ -72,31 +78,31 @@ export function chatStream(
 }
 
 export async function fetchSessions() {
-  const res = await fetch(`${BASE}/sessions`);
+  const res = await fetch(apiUrl('/api/sessions'));
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
 export async function fetchSessionDetail(id: string) {
-  const res = await fetch(`${BASE}/sessions/${id}`);
+  const res = await fetch(apiUrl(`/api/sessions/${id}`));
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
 export async function deleteSession(id: string) {
-  const res = await fetch(`${BASE}/sessions/${id}`, { method: 'DELETE' });
+  const res = await fetch(apiUrl(`/api/sessions/${id}`), { method: 'DELETE' });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
 export async function createSession() {
-  const res = await fetch(`${BASE}/sessions`, { method: 'POST' });
+  const res = await fetch(apiUrl('/api/sessions'), { method: 'POST' });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
 export async function fetchStats() {
-  const res = await fetch(`${BASE}/stats`);
+  const res = await fetch(apiUrl('/api/stats'));
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
