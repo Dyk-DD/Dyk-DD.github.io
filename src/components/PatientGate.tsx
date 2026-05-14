@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getApiBase, getToken, getPatientId, setPatientId, hasPatient } from '../api/config';
+import { getApiBase, getToken, setPatientId, hasPatient } from '../api/config';
 
 interface Props {
   onReady: () => void;
