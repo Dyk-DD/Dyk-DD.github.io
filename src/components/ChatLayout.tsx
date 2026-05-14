@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { useChatStore } from '../store/chatStore';
-import { isApiConfigured, clearToken } from '../api/config';
+import { isApiConfigured, clearToken, getPatientId, clearPatientId } from '../api/config';
 import ApiSettings from './ApiSettings';
 
 export default function ChatLayout() {
@@ -24,8 +24,15 @@ export default function ChatLayout() {
       <aside className="sidebar">
         <div className="sidebar-header">
           <h2>🏥 临床决策辅助</h2>
+          <div className="patient-badge" title="当前患者身份">
+            🧑 {getPatientId().slice(0, 12)}...
+          </div>
           <button className="btn-new-session" onClick={newSession}>
             + 新会话
+          </button>
+          <button className="btn-new-session" style={{ marginTop: 4, background: '#475569' }}
+            onClick={() => { clearPatientId(); window.location.reload(); }}>
+            🔄 切换患者
           </button>
         </div>
 
@@ -65,7 +72,7 @@ export default function ChatLayout() {
             ⚙ 后端连接
             <span className={`api-status ${apiOk ? 'ok' : 'none'}`} />
           </button>
-          <button type="button" className="btn-settings btn-logout" onClick={() => { clearToken(); window.location.reload(); }}>
+          <button type="button" className="btn-settings btn-logout" onClick={() => { clearToken(); clearPatientId(); window.location.reload(); }}>
             🚪 退出
           </button>
         </div>

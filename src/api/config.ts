@@ -38,19 +38,22 @@ export function isAuthenticated(): boolean {
   return getToken() !== '';
 }
 
-// ── Per-client anonymous ID for session isolation ────────────────────
+// ── Patient identity ────────────────────────────────────────────────
 
-const CLIENT_ID_KEY = 'agentic_rag_cid';
+const PATIENT_KEY = 'agentic_rag_patient';
 
-function generateId(): string {
-  return 'c' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+export function getPatientId(): string {
+  return localStorage.getItem(PATIENT_KEY) || '';
 }
 
-export function getClientId(): string {
-  let id = localStorage.getItem(CLIENT_ID_KEY);
-  if (!id) {
-    id = generateId();
-    localStorage.setItem(CLIENT_ID_KEY, id);
-  }
-  return id;
+export function setPatientId(pid: string): void {
+  localStorage.setItem(PATIENT_KEY, pid);
+}
+
+export function clearPatientId(): void {
+  localStorage.removeItem(PATIENT_KEY);
+}
+
+export function hasPatient(): boolean {
+  return getPatientId() !== '';
 }
