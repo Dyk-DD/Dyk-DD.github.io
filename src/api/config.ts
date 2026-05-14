@@ -37,3 +37,20 @@ export function clearToken(): void {
 export function isAuthenticated(): boolean {
   return getToken() !== '';
 }
+
+// ── Per-client anonymous ID for session isolation ────────────────────
+
+const CLIENT_ID_KEY = 'agentic_rag_cid';
+
+function generateId(): string {
+  return 'c' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+}
+
+export function getClientId(): string {
+  let id = localStorage.getItem(CLIENT_ID_KEY);
+  if (!id) {
+    id = generateId();
+    localStorage.setItem(CLIENT_ID_KEY, id);
+  }
+  return id;
+}

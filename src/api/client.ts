@@ -1,4 +1,4 @@
-import { getApiBase, getToken } from './config';
+import { getApiBase, getToken, getClientId } from './config';
 
 function apiUrl(path: string): string {
   const base = getApiBase();
@@ -8,7 +8,10 @@ function apiUrl(path: string): string {
 
 function hdrs(extra?: Record<string, string>): Record<string, string> {
   const token = getToken();
-  const base: Record<string, string> = { 'ngrok-skip-browser-warning': 'true' };
+  const base: Record<string, string> = {
+    'ngrok-skip-browser-warning': 'true',
+    'x-client-id': getClientId(),
+  };
   if (token) base['Authorization'] = `Bearer ${token}`;
   return { ...base, ...extra };
 }
