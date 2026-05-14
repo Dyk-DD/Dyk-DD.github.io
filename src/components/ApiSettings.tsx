@@ -10,6 +10,7 @@ export default function ApiSettings({ open, onClose }: Props) {
   const [url, setUrl] = useState(() => getApiBase());
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<'idle' | 'ok' | 'fail'>('idle');
+  const [testError, setTestError] = useState('');
 
   if (!open) return null;
 
@@ -21,8 +22,6 @@ export default function ApiSettings({ open, onClose }: Props) {
     }
     onClose();
   };
-
-  const [testError, setTestError] = useState('');
 
   const handleTest = async () => {
     if (!url.trim()) return;
