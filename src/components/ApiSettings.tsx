@@ -22,19 +22,32 @@ export default function ApiSettings({ open, onClose }: Props) {
     onClose();
   };
 
+  const [testError, setTestError] = useState('');
+
   const handleTest = async () => {
     if (!url.trim()) return;
     setTesting(true);
     setTestResult('idle');
+    setTestError('');
     try {
-      const res = await fetch(`${url.replace(/\/+$/, '')}/api/health`);
+      const res = await fetch(`${url.replace(/\/+$/, '')}/api/health`, {
+        headers: { 'ngrok-skip-browser-warning': 'true' },
+      });
       if (res.ok) {
-        setTestResult('ok');
+        const data = await res.json();
+        if (data.status === 'ok') {
+          setTestResult('ok');
+        } else {
+          setTestResult('fail');
+          setTestError('后端返回异常: ' + JSON.stringify(data));
+        }
       } else {
         setTestResult('fail');
+        setTestError(`HTTP ${res.status}: ${res.statusText}`);
       }
-    } catch {
+    } catch (e: any) {
       setTestResult('fail');
+      setTestError(e.message || String(e));
     } finally {
       setTesting(false);
     }
@@ -83,7 +96,7 @@ export default function ApiSettings({ open, onClose }: Props) {
           </div>
 
           {testResult === 'ok' && <div className="test-result success">✓ 连接成功！后端正常运行</div>}
-          {testResult === 'fail' && <div className="test-result fail">✗ 无法连接到后端，请检查地址和服务状态</div>}
+          {testResult === 'fail' && <div className="test-result fail">✗ 连接失败{testError ? `：${testError}` : ''}</div>}
 
           <div className="settings-steps">
             <h4>本地联调步骤：</h4>

@@ -6,10 +6,15 @@ function apiUrl(path: string): string {
   return `${base}${path}`;
 }
 
+// Bypass ngrok browser warning interstitial
+function hdrs(extra?: Record<string, string>): Record<string, string> {
+  return { 'ngrok-skip-browser-warning': 'true', ...extra };
+}
+
 export async function chatNonStream(question: string) {
   const res = await fetch(apiUrl('/api/chat'), {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: hdrs({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({ question, stream: false }),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -27,7 +32,7 @@ export function chatStream(
 
   fetch(apiUrl('/api/chat/stream'), {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: hdrs({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({ question, stream: true }),
     signal: controller.signal,
   })
@@ -78,31 +83,31 @@ export function chatStream(
 }
 
 export async function fetchSessions() {
-  const res = await fetch(apiUrl('/api/sessions'));
+  const res = await fetch(apiUrl('/api/sessions'), { headers: hdrs() });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
 export async function fetchSessionDetail(id: string) {
-  const res = await fetch(apiUrl(`/api/sessions/${id}`));
+  const res = await fetch(apiUrl(`/api/sessions/${id}`), { headers: hdrs() });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
 export async function deleteSession(id: string) {
-  const res = await fetch(apiUrl(`/api/sessions/${id}`), { method: 'DELETE' });
+  const res = await fetch(apiUrl(`/api/sessions/${id}`), { method: 'DELETE', headers: hdrs() });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
 export async function createSession() {
-  const res = await fetch(apiUrl('/api/sessions'), { method: 'POST' });
+  const res = await fetch(apiUrl('/api/sessions'), { method: 'POST', headers: hdrs() });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
 export async function fetchStats() {
-  const res = await fetch(apiUrl('/api/stats'));
+  const res = await fetch(apiUrl('/api/stats'), { headers: hdrs() });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
