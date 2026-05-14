@@ -1,16 +1,15 @@
 const STORAGE_KEY = 'agentic_rag_api_base';
+const DEFAULT_BACKEND = 'https://symmetric-maire-overthoughtfully.ngrok-free.dev';
 
 export function getApiBase(): string {
-  // In dev mode, use Vite proxy to localhost:8000
   if (import.meta.env.DEV) {
     return '/api';
   }
-  // In production (GitHub Pages), use user-configured backend URL
-  return localStorage.getItem(STORAGE_KEY) || '';
+  // User override via localStorage takes priority, otherwise use default
+  return localStorage.getItem(STORAGE_KEY) || DEFAULT_BACKEND;
 }
 
 export function setApiBase(url: string): void {
-  // Strip trailing slash
   const clean = url.replace(/\/+$/, '');
   localStorage.setItem(STORAGE_KEY, clean);
 }
