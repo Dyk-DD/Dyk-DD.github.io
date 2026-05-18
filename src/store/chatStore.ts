@@ -69,6 +69,20 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
 
+  activateSession: async (sessionId: string) => {
+    try {
+      await api.activateSession(sessionId);
+      const detail = await api.fetchSessionDetail(sessionId);
+      const messages: Message[] = (detail.turns || []).flatMap((t: any) => [
+        { id: nextId(), role: 'user' as const, content: t.question, timestamp: Date.parse(t.created_at) || Date.now() },
+        { id: nextId(), role: 'assistant' as const, content: t.answer, timestamp: Date.now() },
+      ]);
+      set({ sessionId, messages, loading: false, streaming: false, error: null, routing: null });
+    } catch {
+      set({ error: '无法加载会话' });
+    }
+  },
+
   newSession: async () => {
     try {
       const data = await api.createSession();

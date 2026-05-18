@@ -107,7 +107,7 @@ body {
   padding: 8px 10px;
   border-radius: var(--radius);
   margin-bottom: 2px;
-  cursor: default;
+  cursor: pointer;
 }
 .session-item:hover { background: var(--sidebar-active); }
 .session-item.active { background: var(--sidebar-active); border-left: 3px solid var(--primary); }

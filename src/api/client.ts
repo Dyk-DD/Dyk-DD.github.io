@@ -2,7 +2,7 @@ import { getApiBase, getToken, getPatientId } from './config';
 
 function apiUrl(path: string): string {
   const base = getApiBase();
-  if (!base) throw new Error('BACKEND_NOT_CONFIGURED');
+  if (!base) return path;  // DEV: 空 base = 相对路径，Vite proxy 转发
   return `${base}${path}`;
 }
 
@@ -107,6 +107,12 @@ export async function deleteSession(id: string) {
 
 export async function createSession() {
   const res = await fetch(apiUrl('/api/sessions'), { method: 'POST', headers: hdrs() });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+export async function activateSession(sessionId: string) {
+  const res = await fetch(apiUrl(`/api/sessions/${sessionId}/activate`), { method: 'PUT', headers: hdrs() });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
